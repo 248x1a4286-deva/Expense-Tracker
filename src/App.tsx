@@ -16,16 +16,17 @@ import {
   CheckCircle2,
   BookOpen,
   Download,
-  Github,
   Wallet,
   Sparkles,
+  Image as ImageIcon,
+  ExternalLink,
 } from 'lucide-react';
 import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
 import { FLUTTER_FILES } from './flutterSourceFiles';
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState<'emulator' | 'code' | 'tests' | 'docs'>('emulator');
+  const [activeTab, setActiveTab] = useState<'emulator' | 'screenshots' | 'code' | 'tests' | 'docs'>('emulator');
   const [expenses, setExpenses] = useState<ExpenseItem[]>([]);
   const [currencySymbol, setCurrencySymbol] = useState<string>('$');
   const [isExporting, setIsExporting] = useState<boolean>(false);
@@ -120,7 +121,7 @@ export default function App() {
                 </span>
               </div>
               <p className="text-xs text-blue-200/80 hidden sm:block">
-                Provider State Architecture • SharedPreferences Local Storage • 4 Screens • Material 3
+                Team: <strong className="text-white font-semibold">M. Deva</strong> & <strong className="text-white font-semibold">Srikanth</strong> • Provider Architecture • Material 3
               </p>
             </div>
           </div>
@@ -154,6 +155,18 @@ export default function App() {
             >
               <Smartphone size={16} />
               <span>Interactive Android Emulator</span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab('screenshots')}
+              className={`flex items-center gap-2 px-4 py-2.5 text-xs font-semibold rounded-lg transition whitespace-nowrap ${
+                activeTab === 'screenshots'
+                  ? 'bg-white text-[#1A237E] shadow-sm'
+                  : 'text-blue-100 hover:text-white hover:bg-white/10'
+              }`}
+            >
+              <ImageIcon size={16} />
+              <span>Screenshots Gallery (4)</span>
             </button>
 
             <button
@@ -312,6 +325,80 @@ export default function App() {
           </div>
         )}
 
+        {activeTab === 'screenshots' && (
+          <div className="w-full space-y-6">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-5 bg-gradient-to-r from-[#1A237E] to-[#283593] text-white rounded-2xl shadow-sm">
+              <div>
+                <h2 className="text-base font-bold">Android Application Screen Gallery</h2>
+                <p className="text-xs text-blue-200 mt-1">
+                  High-fidelity Android screenshots generated for group project deliverables and reports.
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-xs bg-white/10 px-3 py-1.5 rounded-xl text-teal-200 font-semibold border border-white/10">
+                  Team: M. Deva & Srikanth
+                </span>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {[
+                {
+                  id: 'screen1',
+                  name: 'Screen 1: Home Dashboard & List',
+                  file: '/screenshots/screen1_home.jpg',
+                  desc: 'Total expenses hero card ($215.69), this month card ($147.20), recent list, and teal Floating Action Button.',
+                },
+                {
+                  id: 'screen2',
+                  name: 'Screen 2: Add Expense Form',
+                  file: '/screenshots/screen2_add.jpg',
+                  desc: 'Validated amount input ($45.50), Category grid with Food highlighted, Date picker, and Save Expense button.',
+                },
+                {
+                  id: 'screen3',
+                  name: 'Screen 3: Expense Details Screen',
+                  file: '/screenshots/screen3_details.jpg',
+                  desc: 'Category banner ($14.50), description, full date, timestamp, transaction UUID, and storage status.',
+                },
+                {
+                  id: 'screen4',
+                  name: 'Screen 4: Summary & Analytics',
+                  file: '/screenshots/screen4_summary.jpg',
+                  desc: 'Total expenditure, highest spending category (Food), category progress bars, and average transaction size ($43.14).',
+                },
+              ].map((s) => (
+                <div key={s.id} className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs hover:shadow-md transition flex flex-col">
+                  <div className="p-3.5 border-b border-slate-100 flex items-center justify-between">
+                    <h3 className="text-xs font-bold text-slate-900 truncate pr-2">{s.name}</h3>
+                    <a
+                      href={s.file}
+                      download={`${s.id}.jpg`}
+                      className="text-xs font-semibold text-[#00897B] flex items-center gap-1 hover:underline shrink-0"
+                    >
+                      <Download size={13} /> Save
+                    </a>
+                  </div>
+                  <div className="relative aspect-[9/16] bg-slate-900 group overflow-hidden">
+                    <img src={s.file} alt={s.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                    <a
+                      href={s.file}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-semibold gap-1.5"
+                    >
+                      <ExternalLink size={15} /> Open Full Size
+                    </a>
+                  </div>
+                  <div className="p-3.5 bg-slate-50 flex-1">
+                    <p className="text-[11px] text-slate-600 leading-relaxed">{s.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {activeTab === 'code' && (
           <div className="w-full">
             <CodeInspector />
@@ -334,8 +421,8 @@ export default function App() {
       {/* Footer */}
       <footer className="bg-white border-t border-slate-200 py-4 px-6 text-center text-xs text-slate-500">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
-          <span>Expense Tracker • Flutter Application Development Programme Group Project</span>
-          <span className="text-slate-400">Target Platform: Android • State Management: Provider</span>
+          <span>Expense Tracker • Developed by <strong className="text-slate-800">M. Deva</strong> & <strong className="text-slate-800">Srikanth</strong></span>
+          <span className="text-slate-400">Flutter 3.35+ • Provider Architecture • Android Target</span>
         </div>
       </footer>
     </div>

@@ -1,8 +1,53 @@
 import React, { useState } from 'react';
-import { BookOpen, Bug, CheckCircle2, Users, FileText, Layers, ShieldCheck } from 'lucide-react';
+import {
+  BookOpen,
+  Bug,
+  CheckCircle2,
+  Users,
+  FileText,
+  Image as ImageIcon,
+  ShieldCheck,
+  Download,
+  ExternalLink,
+} from 'lucide-react';
 
 export const DocsViewer: React.FC = () => {
-  const [activeDoc, setActiveDoc] = useState<'readme' | 'defects'>('readme');
+  const [activeDoc, setActiveDoc] = useState<'screenshots' | 'readme' | 'defects'>('screenshots');
+
+  const screenshots = [
+    {
+      id: 'screen-1',
+      title: 'Screen 1: Home Dashboard & Expense List',
+      description: 'Features Lifetime Total Expenses card ($215.69), This Month card ($147.20), Top Category (Food), and categorized transaction list with teal FAB.',
+      image: '/screenshots/screen1_home.jpg',
+      aspect: '9:16',
+      badge: 'Screen 1',
+    },
+    {
+      id: 'screen-2',
+      title: 'Screen 2: Add Expense Form',
+      description: 'Features verified amount field ($45.50), Category grid with Food highlighted, Date picker, description textarea, and Save Expense button.',
+      image: '/screenshots/screen2_add.jpg',
+      aspect: '9:16',
+      badge: 'Screen 2',
+    },
+    {
+      id: 'screen-3',
+      title: 'Screen 3: Expense Details Screen',
+      description: 'Displays hero category header with $14.50, description, full date, timestamp, transaction UUID, and local storage persistence badge.',
+      image: '/screenshots/screen3_details.jpg',
+      aspect: '9:16',
+      badge: 'Screen 3',
+    },
+    {
+      id: 'screen-4',
+      title: 'Screen 4: Expense Summary & Analytics',
+      description: 'Calculates total expenditure, highest spending category (Food), category-wise breakdown with progress bars, percentages, and average transaction size ($43.14).',
+      image: '/screenshots/screen4_summary.jpg',
+      aspect: '9:16',
+      badge: 'Screen 4',
+    },
+  ];
 
   const defects = [
     {
@@ -59,12 +104,23 @@ export const DocsViewer: React.FC = () => {
         <div className="flex items-center gap-3">
           <BookOpen size={20} className="text-teal-400" />
           <div>
-            <h2 className="text-sm font-bold">Project Documentation & Submission Deliverables</h2>
-            <p className="text-[11px] text-slate-400">README.md • defect_log.md • Course Group Rubric</p>
+            <h2 className="text-sm font-bold">Project Deliverables & Documentation</h2>
+            <p className="text-[11px] text-slate-400">Team: M. Deva & Srikanth • Screenshots • README • Defect Log</p>
           </div>
         </div>
 
         <div className="flex items-center gap-1 bg-slate-800 p-1 rounded-xl">
+          <button
+            onClick={() => setActiveDoc('screenshots')}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition ${
+              activeDoc === 'screenshots'
+                ? 'bg-[#1A237E] text-white shadow-xs'
+                : 'text-slate-400 hover:text-white'
+            }`}
+          >
+            <ImageIcon size={14} />
+            <span>App Screenshots ({screenshots.length})</span>
+          </button>
           <button
             onClick={() => setActiveDoc('readme')}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition ${
@@ -92,7 +148,74 @@ export const DocsViewer: React.FC = () => {
 
       {/* Main Content Area */}
       <div className="flex-1 overflow-y-auto p-6 text-slate-800">
-        {activeDoc === 'defects' ? (
+        {/* TAB 1: SCREENSHOTS */}
+        {activeDoc === 'screenshots' && (
+          <div className="space-y-6">
+            <div className="p-4 bg-gradient-to-r from-[#1A237E] to-[#283593] text-white rounded-xl flex items-center justify-between">
+              <div>
+                <h3 className="text-sm font-bold">Android Application Screenshots</h3>
+                <p className="text-xs text-blue-100 mt-0.5">
+                  Visual screenshots for group submission, project report, and demonstration presentation.
+                </p>
+              </div>
+              <div className="text-xs bg-white/10 px-3 py-1 rounded-lg font-medium text-teal-200">
+                Team: M. Deva & Srikanth
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+              {screenshots.map((item) => (
+                <div
+                  key={item.id}
+                  className="bg-slate-50 border border-slate-200 rounded-2xl overflow-hidden shadow-xs hover:shadow-md transition flex flex-col"
+                >
+                  <div className="p-3 bg-white border-b border-slate-200 flex items-center justify-between">
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#1A237E]/10 text-[#1A237E] uppercase tracking-wider">
+                      {item.badge}
+                    </span>
+                    <a
+                      href={item.image}
+                      download={`${item.id}.jpg`}
+                      className="text-xs text-[#00897B] font-semibold flex items-center gap-1 hover:underline"
+                    >
+                      <Download size={13} />
+                      Save
+                    </a>
+                  </div>
+
+                  <div className="relative bg-slate-900 aspect-[9/16] overflow-hidden flex items-center justify-center group">
+                    <img
+                      src={item.image}
+                      alt={item.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                    <a
+                      href={item.image}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-semibold gap-1.5"
+                    >
+                      <ExternalLink size={16} />
+                      View Full Size
+                    </a>
+                  </div>
+
+                  <div className="p-3.5 flex-1 flex flex-col justify-between bg-white">
+                    <div>
+                      <h4 className="text-xs font-bold text-slate-900">{item.title}</h4>
+                      <p className="text-[11px] text-slate-500 mt-1 leading-relaxed">
+                        {item.description}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* TAB 2: DEFECT LOG */}
+        {activeDoc === 'defects' && (
           <div className="space-y-6">
             <div className="flex items-center justify-between p-4 bg-emerald-50 border border-emerald-200 rounded-xl">
               <div>
@@ -149,7 +272,10 @@ export const DocsViewer: React.FC = () => {
               ))}
             </div>
           </div>
-        ) : (
+        )}
+
+        {/* TAB 3: README */}
+        {activeDoc === 'readme' && (
           <div className="space-y-6 max-w-4xl mx-auto">
             {/* README Hero */}
             <div className="p-6 bg-gradient-to-r from-[#1A237E] to-[#283593] text-white rounded-2xl shadow-sm">
@@ -163,6 +289,47 @@ export const DocsViewer: React.FC = () => {
                 <span className="bg-white/10 px-2.5 py-1 rounded-md">SharedPreferences</span>
                 <span className="bg-white/10 px-2.5 py-1 rounded-md">Sound Null Safety</span>
                 <span className="bg-white/10 px-2.5 py-1 rounded-md">Material 3 Seed: #1A237E</span>
+              </div>
+            </div>
+
+            {/* Team Members & Contributions Table */}
+            <div className="bg-slate-50 border border-slate-200 rounded-xl p-5">
+              <div className="flex items-center gap-2 mb-3">
+                <Users size={16} className="text-[#1A237E]" />
+                <h2 className="text-sm font-bold text-slate-900">Team Members & Contributions</h2>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-xs text-left border-collapse">
+                  <thead>
+                    <tr className="border-b border-slate-200 text-slate-500 uppercase tracking-wider text-[10px]">
+                      <th className="py-2.5 w-1/4">Member Name</th>
+                      <th className="py-2.5 w-1/4">Project Role</th>
+                      <th className="py-2.5">Key Contributions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-200/70">
+                    <tr>
+                      <td className="py-3 font-bold text-slate-900 text-sm">M. Deva</td>
+                      <td className="py-3 font-semibold text-[#1A237E]">Lead Flutter Architecture & State</td>
+                      <td className="py-3 text-slate-700 leading-relaxed">
+                        • <code>ExpenseProvider</code> architecture extending <code>ChangeNotifier</code>.<br />
+                        • <code>ExpenseStorageService</code> persistent local storage via <code>SharedPreferences</code>.<br />
+                        • <code>Expense</code> model serialization (<code>toJson</code> / <code>fromJson</code>).<br />
+                        • Automated Flutter widget testing suite (<code>test/widget_test.dart</code>).
+                      </td>
+                    </tr>
+                    <tr>
+                      <td className="py-3 font-bold text-slate-900 text-sm">Srikanth</td>
+                      <td className="py-3 font-semibold text-[#00897B]">UI/UX Design & Frontend Engineering</td>
+                      <td className="py-3 text-slate-700 leading-relaxed">
+                        • Screen 1 (Home Dashboard) and Screen 3 (Expense Details) UI design.<br />
+                        • Screen 2 (Add Expense) form validation, currency masks, and date picker.<br />
+                        • Screen 4 (Expense Summary & Analytics) category breakdown & progress bars.<br />
+                        • QA testing, defect logging (<code>defect_log.md</code>), and Material 3 theme.
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
             </div>
 
@@ -203,48 +370,6 @@ export const DocsViewer: React.FC = () => {
                   </div>
                 </div>
               </div>
-            </div>
-
-            {/* Team Contributions Table */}
-            <div className="bg-slate-50 border border-slate-200 rounded-xl p-5">
-              <div className="flex items-center gap-2 mb-3">
-                <Users size={16} className="text-[#1A237E]" />
-                <h2 className="text-sm font-bold text-slate-900">3. Team Members & Contributions (Section 10)</h2>
-              </div>
-              <table className="w-full text-xs text-left border-collapse">
-                <thead>
-                  <tr className="border-b border-slate-200 text-slate-500 uppercase tracking-wider text-[10px]">
-                    <th className="py-2">Member Name</th>
-                    <th className="py-2">Student ID</th>
-                    <th className="py-2">Key Contributions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-200/70">
-                  <tr>
-                    <td className="py-2.5 font-bold text-slate-800">[Team Member 1]</td>
-                    <td className="py-2.5 font-mono text-slate-600">[Student ID 1]</td>
-                    <td className="py-2.5 text-slate-700">ExpenseProvider state architecture, ExpenseStorageService persistence, widget test suite</td>
-                  </tr>
-                  <tr>
-                    <td className="py-2.5 font-bold text-slate-800">[Team Member 2]</td>
-                    <td className="py-2.5 font-mono text-slate-600">[Student ID 2]</td>
-                    <td className="py-2.5 text-slate-700">Screen 1 (Home Dashboard) & Screen 3 (Expense Details) UI design and interaction flow</td>
-                  </tr>
-                  <tr>
-                    <td className="py-2.5 font-bold text-slate-800">[Team Member 3]</td>
-                    <td className="py-2.5 font-mono text-slate-600">[Student ID 3]</td>
-                    <td className="py-2.5 text-slate-700">Screen 2 (Add Expense) form validation, input sanitization, and date picker modal</td>
-                  </tr>
-                  <tr>
-                    <td className="py-2.5 font-bold text-slate-800">[Team Member 4]</td>
-                    <td className="py-2.5 font-mono text-slate-600">[Student ID 4]</td>
-                    <td className="py-2.5 text-slate-700">Screen 4 (Expense Summary & Analytics), category charts, defect logging, and release APK configuration</td>
-                  </tr>
-                </tbody>
-              </table>
-              <p className="text-[11px] text-slate-400 mt-3">
-                * Note: Names and student IDs contain placeholders ready to be updated with your group members before final submission.
-              </p>
             </div>
           </div>
         )}

@@ -105,9 +105,9 @@ expense_tracker/
 
 ## 📸 Screenshots
 
-| 1. Dashboard & List | 2. Add Expense Form | 3. Analytics & Summary |
-| :---: | :---: | :---: |
-| ![Screen 1: Dashboard Placeholder](https://placehold.co/360x640/1A237E/ffffff?text=Screen+1%3A+Dashboard+%26+List) | ![Screen 2: Add Expense Placeholder](https://placehold.co/360x640/00897B/ffffff?text=Screen+2%3A+Add+Expense+Form) | ![Screen 4: Summary & Analytics Placeholder](https://placehold.co/360x640/1A237E/ffffff?text=Screen+4%3A+Analytics+%26+Charts) |
+| 1. Dashboard & List Screen | 2. Add Expense Form Screen | 3. Expense Details Screen | 4. Summary & Analytics Screen |
+| :---: | :---: | :---: | :---: |
+| ![Screen 1: Dashboard & List](public/screenshots/screen1_home.jpg) | ![Screen 2: Add Expense Form](public/screenshots/screen2_add.jpg) | ![Screen 3: Expense Details](public/screenshots/screen3_details.jpg) | ![Screen 4: Summary & Analytics](public/screenshots/screen4_summary.jpg) |
 
 ---
 
@@ -152,12 +152,10 @@ expense_tracker/
 
 ## 👥 Team Members & Contributions
 
-| Member Name | Student ID | Key Contributions |
+| Member Name | Role | Key Contributions |
 | :--- | :--- | :--- |
-| **[Team Member 1 Name]** | `[Student ID 1]` | `ExpenseProvider` state architecture, `ExpenseStorageService` persistence, and unit testing |
-| **[Team Member 2 Name]** | `[Student ID 2]` | Screen 1 (Home Dashboard) and Screen 3 (Expense Details) UI design and implementation |
-| **[Team Member 3 Name]** | `[Student ID 3]` | Screen 2 (Add Expense) form validation, date picker, and input robustness |
-| **[Team Member 4 Name]** | `[Student ID 4]` | Screen 4 (Expense Summary & Analytics), category charts, defect logging, and documentation |
+| **M. Deva** | Lead Flutter Engineer & Architecture | • `ExpenseProvider` state architecture using `ChangeNotifier`<br>• `ExpenseStorageService` persistent device storage using `SharedPreferences`<br>• `Expense` data model JSON serialization/deserialization<br>• Automated Flutter widget testing suite (`test/widget_test.dart`) |
+| **Srikanth** | UI/UX Designer & Mobile Developer | • Screen 1 (Home Dashboard) and Screen 3 (Expense Details) UI design<br>• Screen 2 (Add Expense) form validation and date picker integration<br>• Screen 4 (Expense Summary & Analytics) category breakdown & progress bars<br>• QA testing, defect logging (`defect_log.md`), and Material 3 theme configuration |
 
 ---
 

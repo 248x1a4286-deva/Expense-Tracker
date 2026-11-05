@@ -1128,4 +1128,65 @@ void main() {
   });
 }`,
   },
+  {
+    path: 'README.md',
+    category: 'doc',
+    description: 'Complete project documentation, architecture, team contributions (M. Deva & Srikanth), and run instructions.',
+    code: `# Expense Tracker – Flutter Android Application
+
+# Project Topic: Personal Finance & Expense Management for Android  
+# Course Programme: Flutter Application Development Programme Group Project  
+# Target Platform: Android (Compatible with Android 5.0+ / API 21 through Android 15 / API 34)
+
+## Team Members & Contributions
+| Member Name | Role | Key Contributions |
+| :--- | :--- | :--- |
+| **M. Deva** | Lead Flutter Engineer & Architecture | ExpenseProvider state architecture using ChangeNotifier, ExpenseStorageService persistent device storage, Expense data model JSON serialization, Automated Flutter widget testing suite (test/widget_test.dart) |
+| **Srikanth** | UI/UX Designer & Mobile Developer | Screen 1 (Home Dashboard) and Screen 3 (Expense Details) UI design, Screen 2 (Add Expense) form validation and date picker integration, Screen 4 (Expense Summary & Analytics) category breakdown & progress bars, QA testing, defect logging (defect_log.md), and Material 3 theme configuration |
+
+## Four Application Screens
+1. Screen 1: Home / Expense List Screen (Loading, Error with retry, Empty state, Actual data list)
+2. Screen 2: Add Expense Screen (Amount, Category, Date, Note validation)
+3. Screen 3: Expense Details Screen (UUID, full timestamp, deletion)
+4. Screen 4: Expense Summary / Analytics Screen (Category breakdown, progress bars, averages)
+
+## Running the Application
+\`\`\`bash
+flutter pub get
+flutter test
+flutter run
+flutter build apk --release
+\`\`\``,
+  },
+  {
+    path: 'defect_log.md',
+    category: 'doc',
+    description: 'Verified QA defect log recording 5 bugs, steps to reproduce, and verified resolutions.',
+    code: `# Expense Tracker – Defect Log
+
+### Defect #1: Negative and Zero Amount Validation Bypass
+- Component: AddExpenseScreen
+- Severity: High
+- Status: FIXED (Verified with widget test #3)
+
+### Defect #2: Rapid Double-Tap Causing Duplicate Expense Records
+- Component: AddExpenseScreen
+- Severity: Medium
+- Status: FIXED (Added _isSubmitting guard)
+
+### Defect #3: Long Expense Notes Overflowing Transaction Cards
+- Component: ExpenseCard
+- Severity: Low
+- Status: FIXED (Added maxLines: 1 and TextOverflow.ellipsis)
+
+### Defect #4: Category Percentage Division by Zero on Empty Data
+- Component: ExpenseProvider & SummaryScreen
+- Severity: Medium
+- Status: FIXED (Added total == 0 guard)
+
+### Defect #5: Deleted Expense Null Pointer in Details Screen
+- Component: ExpenseDetailsScreen
+- Severity: Low
+- Status: FIXED (Wrapped element lookup in try-catch with fallback)`,
+  },
 ];
