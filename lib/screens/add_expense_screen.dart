@@ -153,8 +153,8 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                 textInputAction: TextInputAction.next,
                 decoration: InputDecoration(
                   hintText: '0.00',
-                  prefixIcon: const Icon(Icons.attach_money),
-                  helperText: 'Enter expense in USD or your local currency',
+                  prefixText: '₹ ',
+                  helperText: 'Enter expense amount in INR (₹)',
                 ),
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
@@ -162,13 +162,13 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                   }
                   final parsed = double.tryParse(value.trim());
                   if (parsed == null) {
-                    return 'Please enter a valid numeric amount (e.g. 15.50).';
+                    return 'Please enter a valid numeric amount (e.g. 150.00).';
                   }
                   if (parsed <= 0) {
                     return 'Amount must be greater than zero.';
                   }
-                  if (parsed > 1000000) {
-                    return 'Amount cannot exceed \$1,000,000.';
+                  if (parsed > 10000000) {
+                    return 'Amount cannot exceed ₹1,00,00,000.';
                   }
                   return null;
                 },

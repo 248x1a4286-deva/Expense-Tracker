@@ -5,38 +5,38 @@ const STORAGE_KEY = 'saved_expenses_list_v1';
 export const INITIAL_SAMPLE_EXPENSES: ExpenseItem[] = [
   {
     id: 'e1a2b3c4-5d6e-7f8a-9b0c-1d2e3f4a5b6c',
-    amount: 14.50,
+    amount: 350.00,
     category: 'Food',
     date: new Date().toISOString(),
-    note: 'Campus Cafeteria Lunch & Coffee',
+    note: 'College Canteen Lunch & Chai',
   },
   {
     id: 'f2b3c4d5-6e7f-8a9b-0c1d-2e3f4a5b6c7d',
-    amount: 32.00,
+    amount: 500.00,
     category: 'Transport',
     date: new Date(Date.now() - 86400000).toISOString(),
-    note: 'Weekly City Transit Pass',
+    note: 'Metro Pass & Auto Fare',
   },
   {
     id: 'a3c4d5e6-7f8a-9b0c-1d2e-3f4a5b6c7d8e',
-    amount: 85.00,
+    amount: 1450.00,
     category: 'Education',
     date: new Date(Date.now() - 172800000).toISOString(),
-    note: 'Data Structures & Algorithms Textbook',
+    note: 'Engineering Textbooks & Stationery',
   },
   {
     id: 'b4d5e6f7-8a9b-0c1d-2e3f-4a5b6c7d8e9f',
-    amount: 19.99,
+    amount: 420.00,
     category: 'Entertainment',
     date: new Date(Date.now() - 259200000).toISOString(),
-    note: 'Movie Ticket with Friends',
+    note: 'Weekend Cinema & Popcorn',
   },
   {
     id: 'c5e6f7a8-9b0c-1d2e-3f4a-5b6c7d8e9f0a',
-    amount: 64.20,
+    amount: 2150.00,
     category: 'Shopping',
     date: new Date(Date.now() - 345600000).toISOString(),
-    note: 'Groceries at Supermarket',
+    note: 'D-Mart Supermarket Groceries',
   },
 ];
 

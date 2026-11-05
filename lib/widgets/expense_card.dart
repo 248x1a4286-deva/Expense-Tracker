@@ -18,7 +18,7 @@ class ExpenseCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final dateFormat = DateFormat('MMM d, yyyy');
-    final currencyFormat = NumberFormat.currency(symbol: '\$', decimalDigits: 2);
+    final currencyFormat = NumberFormat.currency(symbol: '₹', decimalDigits: 2);
 
     return Card(
       elevation: 0.8,

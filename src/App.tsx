@@ -14,7 +14,7 @@ export default function App() {
   const [selectedExpenseId, setSelectedExpenseId] = useState<string | null>(null);
   const [expenses, setExpenses] = useState<ExpenseItem[]>([]);
 
-  // Load saved expenses from local device storage
+  // Load saved expenses from local storage
   useEffect(() => {
     const loaded = loadStoredExpenses();
     setExpenses(loaded);
@@ -47,48 +47,44 @@ export default function App() {
   const selectedExpense = expenses.find((e) => e.id === selectedExpenseId);
 
   return (
-    <div className="min-h-screen bg-slate-900 md:bg-slate-800 flex items-center justify-center font-sans antialiased">
-      {/* Mobile Application Container */}
-      <div className="w-full md:max-w-md h-screen md:h-[840px] md:max-h-[95vh] bg-[#F8F9FA] md:rounded-[32px] overflow-hidden shadow-2xl flex flex-col relative md:border md:border-slate-700/60">
-        <main className="flex-1 overflow-hidden relative">
-          {currentScreen === 'home' && (
-            <HomeScreenView
-              expenses={expenses}
-              currencySymbol="$"
-              emulatorState="normal"
-              onNavigateToAdd={() => setCurrentScreen('add')}
-              onNavigateToSummary={() => setCurrentScreen('summary')}
-              onSelectExpense={handleSelectExpense}
-              onRetry={() => {}}
-            />
-          )}
+    <div className="min-h-screen w-full bg-[#F8F9FA] flex flex-col font-sans antialiased selection:bg-[#1A237E]/20 text-slate-800">
+      <main className="flex-1 flex flex-col">
+        {currentScreen === 'home' && (
+          <HomeScreenView
+            expenses={expenses}
+            currencySymbol="₹"
+            emulatorState="normal"
+            onNavigateToAdd={() => setCurrentScreen('add')}
+            onNavigateToSummary={() => setCurrentScreen('summary')}
+            onSelectExpense={handleSelectExpense}
+          />
+        )}
 
-          {currentScreen === 'add' && (
-            <AddExpenseView
-              currencySymbol="$"
-              onSave={handleAddExpense}
-              onBack={() => setCurrentScreen('home')}
-            />
-          )}
+        {currentScreen === 'add' && (
+          <AddExpenseView
+            currencySymbol="₹"
+            onSave={handleAddExpense}
+            onBack={() => setCurrentScreen('home')}
+          />
+        )}
 
-          {currentScreen === 'details' && (
-            <ExpenseDetailsView
-              expense={selectedExpense}
-              currencySymbol="$"
-              onDelete={handleDeleteExpense}
-              onBack={() => setCurrentScreen('home')}
-            />
-          )}
+        {currentScreen === 'details' && (
+          <ExpenseDetailsView
+            expense={selectedExpense}
+            currencySymbol="₹"
+            onDelete={handleDeleteExpense}
+            onBack={() => setCurrentScreen('home')}
+          />
+        )}
 
-          {currentScreen === 'summary' && (
-            <ExpenseSummaryView
-              expenses={expenses}
-              currencySymbol="$"
-              onBack={() => setCurrentScreen('home')}
-            />
-          )}
-        </main>
-      </div>
+        {currentScreen === 'summary' && (
+          <ExpenseSummaryView
+            expenses={expenses}
+            currencySymbol="₹"
+            onBack={() => setCurrentScreen('home')}
+          />
+        )}
+      </main>
     </div>
   );
 }

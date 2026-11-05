@@ -15,7 +15,7 @@ class ExpenseSummaryScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final provider = context.watch<ExpenseProvider>();
-    final currencyFormat = NumberFormat.currency(symbol: '\$', decimalDigits: 2);
+    final currencyFormat = NumberFormat.currency(symbol: '₹', decimalDigits: 2);
 
     final totalSpent = provider.totalExpenses;
     final categoryTotals = provider.categoryTotals;

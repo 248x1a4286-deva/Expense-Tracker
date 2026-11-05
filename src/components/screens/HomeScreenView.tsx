@@ -17,16 +17,17 @@ import {
   RefreshCw,
   ChevronRight,
   TrendingUp,
+  PieChart,
 } from 'lucide-react';
 
 interface HomeScreenViewProps {
   expenses: ExpenseItem[];
-  currencySymbol: string;
-  emulatorState: EmulatorState;
+  currencySymbol?: string;
+  emulatorState?: EmulatorState;
   onNavigateToAdd: () => void;
   onNavigateToSummary: () => void;
   onSelectExpense: (id: string) => void;
-  onRetry: () => void;
+  onRetry?: () => void;
 }
 
 export const getCategoryIcon = (category: ExpenseCategory, size = 18, className = '') => {
@@ -75,18 +76,19 @@ export const getCategoryColor = (category: ExpenseCategory) => {
 
 export const HomeScreenView: React.FC<HomeScreenViewProps> = ({
   expenses,
-  currencySymbol,
-  emulatorState,
+  currencySymbol = '₹',
+  emulatorState = 'normal',
   onNavigateToAdd,
   onNavigateToSummary,
   onSelectExpense,
-  onRetry,
+  onRetry = () => {},
 }) => {
   const [selectedCategoryFilter, setSelectedCategoryFilter] = useState<string>('All');
 
-  // Calculations matching Flutter ExpenseProvider
+  // Total expenses calculation
   const totalExpenses = expenses.reduce((sum, item) => sum + item.amount, 0);
 
+  // Current month calculation
   const now = new Date();
   const currentMonthExpenses = expenses
     .filter((e) => {
@@ -110,6 +112,10 @@ export const HomeScreenView: React.FC<HomeScreenViewProps> = ({
     }
   });
 
+  const sortedCategories = Object.entries(categoryTotals)
+    .filter(([_, amt]) => amt > 0)
+    .sort((a, b) => b[1] - a[1]);
+
   const filteredExpenses =
     selectedCategoryFilter === 'All'
       ? expenses
@@ -118,10 +124,10 @@ export const HomeScreenView: React.FC<HomeScreenViewProps> = ({
   // Render State 1: Loading
   if (emulatorState === 'loading') {
     return (
-      <div className="flex flex-col items-center justify-center h-full p-8 text-center bg-[#F8F9FA]">
+      <div className="flex flex-col items-center justify-center h-full min-h-[500px] p-8 text-center bg-[#F8F9FA]">
         <div className="w-12 h-12 border-4 border-[#1A237E]/20 border-t-[#1A237E] rounded-full animate-spin mb-4" />
         <h3 className="text-base font-semibold text-slate-800">Loading your expenses...</h3>
-        <p className="text-xs text-slate-500 mt-1">Reading SharedPreferences local storage</p>
+        <p className="text-xs text-slate-500 mt-1">Reading local device storage</p>
       </div>
     );
   }
@@ -129,13 +135,13 @@ export const HomeScreenView: React.FC<HomeScreenViewProps> = ({
   // Render State 2: Error with Retry
   if (emulatorState === 'error') {
     return (
-      <div className="flex flex-col items-center justify-center h-full p-8 text-center bg-[#F8F9FA]">
+      <div className="flex flex-col items-center justify-center h-full min-h-[500px] p-8 text-center bg-[#F8F9FA]">
         <div className="w-14 h-14 bg-rose-50 text-rose-600 rounded-full flex items-center justify-center mb-4">
           <AlertCircle size={32} />
         </div>
         <h3 className="text-base font-bold text-slate-900">Oops! Failed to load data</h3>
         <p className="text-xs text-slate-500 mt-2 max-w-[260px]">
-          Could not read records from local device storage. Please tap retry to reload.
+          Could not read records from local device storage.
         </p>
         <button
           onClick={onRetry}
@@ -148,205 +154,307 @@ export const HomeScreenView: React.FC<HomeScreenViewProps> = ({
     );
   }
 
-  // Render State 3: Empty State
   const isEmpty = expenses.length === 0 || emulatorState === 'empty';
 
   return (
     <div className="relative flex flex-col h-full bg-[#F8F9FA] overflow-y-auto">
-      {/* Flutter AppBar */}
-      <div className="sticky top-0 z-20 flex items-center justify-between px-4 py-3 bg-[#1A237E] text-white shadow-md">
-        <div className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center text-teal-300">
-            <Wallet size={16} />
-          </div>
-          <div>
-            <h1 className="text-base font-bold leading-tight">Expense Tracker</h1>
-          </div>
-        </div>
-        <button
-          onClick={onNavigateToSummary}
-          title="View Expense Analytics"
-          className="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white transition active:scale-95"
-        >
-          <BarChart3 size={18} />
-        </button>
-      </div>
-
-      {/* Financial Overview Header */}
-      <div className="p-4 bg-gradient-to-b from-[#1A237E]/8 to-transparent">
-        <div className="flex items-center justify-between text-xs text-slate-500 mb-2">
-          <span className="font-medium text-slate-700">Financial Overview</span>
-          <span className="font-semibold text-teal-700 bg-teal-50 px-2 py-0.5 rounded-md border border-teal-200/60">
-            {expenses.length} {expenses.length === 1 ? 'Transaction' : 'Transactions'}
-          </span>
-        </div>
-
-        {/* Hero Card: Total Spending */}
-        <div className="p-4 rounded-2xl bg-gradient-to-br from-[#1A237E] to-[#283593] text-white shadow-md mb-3">
-          <div className="flex items-center justify-between text-xs text-blue-200">
-            <span className="font-medium tracking-wide text-[11px] uppercase">Total Expenses</span>
-            <Wallet size={16} className="text-teal-300" />
-          </div>
-          <div className="text-2xl font-bold tracking-tight mt-1">
-            {currencySymbol}
-            {totalExpenses.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-          </div>
-          <div className="text-[11px] text-blue-200/80 mt-1 flex items-center gap-1.5">
-            <TrendingUp size={12} className="text-teal-300" />
-            Lifetime cumulative spending
-          </div>
-        </div>
-
-        {/* Two Sub-KPI Cards */}
-        <div className="grid grid-cols-2 gap-2.5">
-          <div className="p-3 bg-white rounded-xl border border-slate-200/80 shadow-xs">
-            <div className="flex items-center justify-between text-[11px] text-slate-500">
-              <span className="font-semibold uppercase tracking-wider text-[10px]">This Month</span>
-              <Calendar size={13} className="text-[#1A237E]" />
+      {/* App Bar (Responsive for Mobile & PC) */}
+      <div className="sticky top-0 z-20 bg-[#1A237E] text-white shadow-md">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3.5 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-xl bg-white/10 flex items-center justify-center text-teal-300">
+              <Wallet size={18} />
             </div>
-            <div className="text-base font-bold text-slate-800 mt-1">
-              {currencySymbol}
-              {currentMonthExpenses.toLocaleString('en-US', {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2,
-              })}
-            </div>
-            <div className="text-[10px] text-slate-400 mt-0.5">Current billing cycle</div>
-          </div>
-
-          <div className="p-3 bg-white rounded-xl border border-slate-200/80 shadow-xs">
-            <div className="flex items-center justify-between text-[11px] text-slate-500">
-              <span className="font-semibold uppercase tracking-wider text-[10px]">Top Category</span>
-              <span className="w-2 h-2 rounded-full bg-teal-500" />
-            </div>
-            <div className="text-base font-bold text-teal-700 mt-1 truncate">
-              {highestCategory}
-            </div>
-            <div className="text-[10px] text-slate-400 mt-0.5">
-              {highestAmount > 0 ? `${currencySymbol}${highestAmount.toFixed(0)} spent` : 'No data'}
+            <div>
+              <h1 className="text-base sm:text-lg font-bold leading-tight tracking-tight">Expense Tracker</h1>
             </div>
           </div>
-        </div>
-      </div>
 
-      {/* Category Filter Chips */}
-      {!isEmpty && (
-        <div className="px-4 pb-2">
-          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1">
-            {['All', 'Food', 'Transport', 'Shopping', 'Education', 'Entertainment', 'Healthcare', 'Bills', 'Other'].map(
-              (cat) => (
-                <button
-                  key={cat}
-                  onClick={() => setSelectedCategoryFilter(cat)}
-                  className={`text-xs px-3 py-1 rounded-full whitespace-nowrap font-medium transition ${
-                    selectedCategoryFilter === cat
-                      ? 'bg-[#1A237E] text-white shadow-xs'
-                      : 'bg-white text-slate-600 border border-slate-200/80 hover:bg-slate-50'
-                  }`}
-                >
-                  {cat}
-                </button>
-              )
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* List Header */}
-      <div className="flex items-center justify-between px-4 pt-2 pb-1">
-        <h2 className="text-xs font-bold uppercase tracking-wider text-slate-700">
-          Recent Transactions {filteredExpenses.length > 0 && `(${filteredExpenses.length})`}
-        </h2>
-        <button
-          onClick={onNavigateToSummary}
-          className="text-xs font-semibold text-[#1A237E] hover:underline"
-        >
-          View Summary
-        </button>
-      </div>
-
-      {/* Main List Content */}
-      <div className="px-4 pb-20 flex-1">
-        {isEmpty ? (
-          /* Empty State View */
-          <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
-            <div className="w-16 h-16 rounded-full bg-[#1A237E]/10 flex items-center justify-center text-[#1A237E] mb-3">
-              <Wallet size={30} />
-            </div>
-            <h3 className="text-sm font-bold text-slate-800">No Expenses Recorded Yet</h3>
-            <p className="text-xs text-slate-500 mt-1 max-w-[240px] leading-relaxed">
-              Start tracking your daily expenses. Tap the button below to add your first transaction.
-            </p>
+          <div className="flex items-center gap-2 sm:gap-3">
+            {/* Desktop Add Expense Button */}
             <button
               onClick={onNavigateToAdd}
-              className="mt-4 flex items-center gap-1.5 px-4 py-2 bg-[#1A237E] text-white text-xs font-semibold rounded-xl hover:bg-[#151c65] transition shadow-sm"
+              className="hidden sm:flex items-center gap-1.5 px-3.5 py-1.5 bg-[#00897B] hover:bg-[#00796B] text-white text-xs font-semibold rounded-lg shadow-xs transition active:scale-95"
             >
-              <Plus size={14} />
-              Add Your First Expense
+              <Plus size={16} />
+              <span>Add Expense</span>
+            </button>
+
+            {/* Analytics Screen Navigation Button */}
+            <button
+              onClick={onNavigateToSummary}
+              title="View Expense Analytics"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white text-xs font-semibold transition active:scale-95"
+            >
+              <BarChart3 size={17} />
+              <span className="hidden sm:inline">Analytics</span>
             </button>
           </div>
-        ) : filteredExpenses.length === 0 ? (
-          <div className="py-8 text-center text-xs text-slate-400">
-            No expenses found in "{selectedCategoryFilter}".
-          </div>
-        ) : (
-          /* Actual Expense List Items */
-          <div className="space-y-2 mt-1">
-            {filteredExpenses.map((expense) => {
-              const colors = getCategoryColor(expense.category);
-              const dateObj = new Date(expense.date);
-              const formattedDate = dateObj.toLocaleDateString('en-US', {
-                month: 'short',
-                day: 'numeric',
-                year: 'numeric',
-              });
-
-              return (
-                <div
-                  key={expense.id}
-                  onClick={() => onSelectExpense(expense.id)}
-                  className="flex items-center justify-between p-3 bg-white rounded-xl border border-slate-200/80 shadow-xs hover:border-[#1A237E]/40 hover:shadow-sm cursor-pointer transition active:scale-[0.99]"
-                >
-                  <div className="flex items-center gap-3 min-w-0">
-                    <div
-                      className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${colors.bg}`}
-                    >
-                      {getCategoryIcon(expense.category, 18)}
-                    </div>
-                    <div className="min-w-0">
-                      <div className="text-xs font-semibold text-slate-800 truncate">
-                        {expense.note}
-                      </div>
-                      <div className="flex items-center gap-1.5 text-[11px] text-slate-400 mt-0.5">
-                        <span className="font-medium text-teal-700">{expense.category}</span>
-                        <span>·</span>
-                        <span>{formattedDate}</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-1.5 shrink-0 pl-2">
-                    <div className="text-right">
-                      <div className="text-xs font-bold text-[#1A237E]">
-                        {currencySymbol}
-                        {expense.amount.toFixed(2)}
-                      </div>
-                    </div>
-                    <ChevronRight size={14} className="text-slate-300" />
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
+        </div>
       </div>
 
-      {/* Floating Action Button */}
+      {/* Main Content Area */}
+      <div className="max-w-6xl mx-auto w-full p-4 sm:p-6 flex-1 flex flex-col">
+        {/* KPI Summary Cards Grid (1 col on mobile, 3 cols on PC) */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mb-4 sm:mb-6">
+          {/* Hero Card: Total Spending */}
+          <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-br from-[#1A237E] to-[#283593] text-white shadow-sm flex flex-col justify-between">
+            <div>
+              <div className="flex items-center justify-between text-xs text-blue-200">
+                <span className="font-semibold uppercase tracking-wider text-[10px]">Total Expenses</span>
+                <Wallet size={16} className="text-teal-300" />
+              </div>
+              <div className="text-2xl sm:text-3xl font-bold tracking-tight mt-1.5">
+                {currencySymbol}
+                {totalExpenses.toLocaleString('en-IN', {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })}
+              </div>
+            </div>
+            <div className="text-[11px] text-blue-200/80 mt-2 flex items-center gap-1.5">
+              <TrendingUp size={13} className="text-teal-300" />
+              <span>Across {expenses.length} total transactions</span>
+            </div>
+          </div>
+
+          {/* KPI 2: This Month */}
+          <div className="p-4 sm:p-5 bg-white rounded-2xl border border-slate-200/80 shadow-xs flex flex-col justify-between">
+            <div>
+              <div className="flex items-center justify-between text-xs text-slate-500">
+                <span className="font-semibold uppercase tracking-wider text-[10px]">This Month</span>
+                <Calendar size={15} className="text-[#1A237E]" />
+              </div>
+              <div className="text-xl sm:text-2xl font-bold text-slate-800 mt-1.5">
+                {currencySymbol}
+                {currentMonthExpenses.toLocaleString('en-IN', {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })}
+              </div>
+            </div>
+            <div className="text-[11px] text-slate-400 mt-2">Current billing cycle</div>
+          </div>
+
+          {/* KPI 3: Top Category */}
+          <div className="p-4 sm:p-5 bg-white rounded-2xl border border-slate-200/80 shadow-xs flex flex-col justify-between">
+            <div>
+              <div className="flex items-center justify-between text-xs text-slate-500">
+                <span className="font-semibold uppercase tracking-wider text-[10px]">Top Category</span>
+                <span className="w-2.5 h-2.5 rounded-full bg-teal-500" />
+              </div>
+              <div className="text-xl sm:text-2xl font-bold text-teal-700 mt-1.5 truncate">
+                {highestCategory}
+              </div>
+            </div>
+            <div className="text-[11px] text-slate-400 mt-2">
+              {highestAmount > 0
+                ? `${currencySymbol}${highestAmount.toLocaleString('en-IN', { minimumFractionDigits: 2 })} spent`
+                : 'No expenses yet'}
+            </div>
+          </div>
+        </div>
+
+        {/* Responsive Content: 1 column on mobile, 2 columns on PC (lg) */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-1">
+          {/* Left/Main Column: Category Filters & Transactions List */}
+          <div className="lg:col-span-2 flex flex-col">
+            {/* Category Filter Chips */}
+            {!isEmpty && (
+              <div className="mb-3">
+                <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1">
+                  {['All', 'Food', 'Transport', 'Shopping', 'Education', 'Entertainment', 'Healthcare', 'Bills', 'Other'].map(
+                    (cat) => (
+                      <button
+                        key={cat}
+                        onClick={() => setSelectedCategoryFilter(cat)}
+                        className={`text-xs px-3 py-1.5 rounded-full whitespace-nowrap font-medium transition cursor-pointer ${
+                          selectedCategoryFilter === cat
+                            ? 'bg-[#1A237E] text-white shadow-xs'
+                            : 'bg-white text-slate-600 border border-slate-200/90 hover:bg-slate-50'
+                        }`}
+                      >
+                        {cat}
+                      </button>
+                    )
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* List Header */}
+            <div className="flex items-center justify-between py-2">
+              <h2 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-700">
+                Recent Transactions {filteredExpenses.length > 0 && `(${filteredExpenses.length})`}
+              </h2>
+              <button
+                onClick={onNavigateToSummary}
+                className="text-xs font-semibold text-[#1A237E] hover:underline cursor-pointer"
+              >
+                View Full Analytics →
+              </button>
+            </div>
+
+            {/* Main List */}
+            <div className="flex-1 pb-16 sm:pb-4">
+              {isEmpty ? (
+                <div className="flex flex-col items-center justify-center py-16 px-4 text-center bg-white rounded-2xl border border-slate-200">
+                  <div className="w-16 h-16 rounded-full bg-[#1A237E]/10 flex items-center justify-center text-[#1A237E] mb-3">
+                    <Wallet size={30} />
+                  </div>
+                  <h3 className="text-sm sm:text-base font-bold text-slate-800">No Expenses Recorded Yet</h3>
+                  <p className="text-xs text-slate-500 mt-1 max-w-[280px] leading-relaxed">
+                    Track your daily expenses in Indian Rupee (₹). Tap the button below to add your first expense.
+                  </p>
+                  <button
+                    onClick={onNavigateToAdd}
+                    className="mt-4 flex items-center gap-1.5 px-4 py-2.5 bg-[#1A237E] text-white text-xs font-semibold rounded-xl hover:bg-[#151c65] transition shadow-sm cursor-pointer"
+                  >
+                    <Plus size={14} />
+                    Add Your First Expense
+                  </button>
+                </div>
+              ) : filteredExpenses.length === 0 ? (
+                <div className="py-12 text-center text-xs text-slate-400 bg-white rounded-2xl border border-slate-200">
+                  No expenses found in "{selectedCategoryFilter}".
+                </div>
+              ) : (
+                <div className="space-y-2.5">
+                  {filteredExpenses.map((expense) => {
+                    const colors = getCategoryColor(expense.category);
+                    const dateObj = new Date(expense.date);
+                    const formattedDate = dateObj.toLocaleDateString('en-IN', {
+                      month: 'short',
+                      day: 'numeric',
+                      year: 'numeric',
+                    });
+
+                    return (
+                      <div
+                        key={expense.id}
+                        onClick={() => onSelectExpense(expense.id)}
+                        className="flex items-center justify-between p-3.5 bg-white rounded-xl border border-slate-200/80 shadow-xs hover:border-[#1A237E]/50 hover:shadow-sm cursor-pointer transition active:scale-[0.99]"
+                      >
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div
+                            className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${colors.bg}`}
+                          >
+                            {getCategoryIcon(expense.category, 18)}
+                          </div>
+                          <div className="min-w-0">
+                            <div className="text-xs sm:text-sm font-semibold text-slate-800 truncate">
+                              {expense.note}
+                            </div>
+                            <div className="flex items-center gap-1.5 text-[11px] text-slate-400 mt-0.5">
+                              <span className="font-medium text-teal-700">{expense.category}</span>
+                              <span>·</span>
+                              <span>{formattedDate}</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-2 shrink-0 pl-3">
+                          <div className="text-right">
+                            <div className="text-xs sm:text-sm font-bold text-[#1A237E]">
+                              {currencySymbol}
+                              {expense.amount.toLocaleString('en-IN', {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2,
+                              })}
+                            </div>
+                          </div>
+                          <ChevronRight size={15} className="text-slate-300" />
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Right Column on PC (lg screens): Spending Distribution Preview */}
+          <div className="hidden lg:block lg:col-span-1">
+            <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs sticky top-20">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <PieChart size={16} className="text-[#1A237E]" />
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-slate-800">
+                    Category Spending
+                  </h3>
+                </div>
+                <button
+                  onClick={onNavigateToSummary}
+                  className="text-[11px] text-[#00897B] font-semibold hover:underline"
+                >
+                  View All
+                </button>
+              </div>
+
+              {sortedCategories.length === 0 ? (
+                <div className="py-8 text-center text-xs text-slate-400">
+                  No expenses to summarize yet.
+                </div>
+              ) : (
+                <div className="space-y-3.5">
+                  {sortedCategories.slice(0, 5).map(([cat, amt]) => {
+                    const percentage = totalExpenses > 0 ? (amt / totalExpenses) * 100 : 0;
+                    const isTop = cat === highestCategory;
+
+                    return (
+                      <div key={cat} className="space-y-1">
+                        <div className="flex items-center justify-between text-xs">
+                          <div className="flex items-center gap-1.5">
+                            <span className="font-semibold text-slate-700">{cat}</span>
+                            {isTop && (
+                              <span className="text-[9px] px-1.5 py-0.2 rounded bg-amber-100 text-amber-800 font-bold uppercase">
+                                Top
+                              </span>
+                            )}
+                          </div>
+                          <div className="font-bold text-slate-800 text-[11px]">
+                            {currencySymbol}
+                            {amt.toLocaleString('en-IN', { minimumFractionDigits: 0 })}
+                            <span className="text-slate-400 ml-1 font-normal">
+                              ({percentage.toFixed(0)}%)
+                            </span>
+                          </div>
+                        </div>
+                        <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                          <div
+                            className={`h-full rounded-full ${
+                              isTop ? 'bg-[#1A237E]' : 'bg-[#00897B]'
+                            }`}
+                            style={{ width: `${percentage}%` }}
+                          />
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+
+              {/* Quick Add Expense Action Box on PC */}
+              <div className="mt-6 pt-5 border-t border-slate-100">
+                <button
+                  onClick={onNavigateToAdd}
+                  className="w-full flex items-center justify-center gap-2 py-2.5 bg-[#1A237E] hover:bg-[#151c65] text-white text-xs font-bold rounded-xl shadow-xs transition active:scale-[0.99] cursor-pointer"
+                >
+                  <Plus size={15} />
+                  <span>Record New Expense</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile Floating Action Button (shown on mobile, hidden on PC where top/sidebar buttons exist) */}
       <button
         onClick={onNavigateToAdd}
-        className="absolute bottom-4 right-4 z-10 flex items-center gap-2 px-4 py-3 bg-[#00897B] text-white text-xs font-bold rounded-2xl shadow-lg hover:bg-[#00796B] transition-transform active:scale-95"
+        className="sm:hidden fixed bottom-5 right-5 z-30 flex items-center gap-2 px-4 py-3 bg-[#00897B] text-white text-xs font-bold rounded-2xl shadow-xl hover:bg-[#00796B] transition-transform active:scale-95 cursor-pointer"
         style={{
-          boxShadow: '0 4px 14px 0 rgba(0, 137, 123, 0.45)',
+          boxShadow: '0 4px 16px 0 rgba(0, 137, 123, 0.45)',
         }}
       >
         <Plus size={18} />
