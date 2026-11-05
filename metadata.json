@@ -1,0 +1,6 @@
+{
+  "name": "Expense Tracker - Flutter Android App",
+  "description": "A complete, modern Flutter Android Expense Tracker with Provider state management, persistent local storage, interactive Android emulator, and full source code.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
