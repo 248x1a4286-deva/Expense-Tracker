@@ -161,7 +161,6 @@ export const HomeScreenView: React.FC<HomeScreenViewProps> = ({
           </div>
           <div>
             <h1 className="text-base font-bold leading-tight">Expense Tracker</h1>
-            <p className="text-[10px] text-teal-200">Flutter • Provider • Local Storage</p>
           </div>
         </div>
         <button
